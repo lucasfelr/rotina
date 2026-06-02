@@ -16,11 +16,12 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
   late TextEditingController _templateNameController;
   late List<Task> _tasks;
 
-  @override
+    @override
   void initState() {
     super.initState();
     _templateNameController = TextEditingController(text: widget.template?.name ?? '');
     _tasks = List.from(widget.template?.tasks ?? []);
+    _tasks.sort((a, b) => a.time.compareTo(b.time)); // Ordenar por horário
   }
 
   @override
@@ -44,6 +45,7 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
                 _tasks[index] = newTask;
               }
             }
+            _tasks.sort((a, b) => a.time.compareTo(b.time)); // Ordenar após salvar
           });
         },
       ),

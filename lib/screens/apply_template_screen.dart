@@ -38,11 +38,12 @@ class _ApplyTemplateScreenState extends State<ApplyTemplateScreen> {
             .map((task) => task.copyWith(isCompleted: false))
             .toList();
       }
-    } else {
+        } else {
       // Criar nova rotina do dia
       _todayTasks = widget.template.tasks
           .map((task) => task.copyWith(isCompleted: false))
           .toList();
+      _todayTasks.sort((a, b) => a.time.compareTo(b.time)); // Ordenar por horário
       _saveDailyRoutine();
     }
   }
