@@ -56,6 +56,22 @@ class TemplateService {
     await _saveTemplates(templates);
   }
 
+  // Duplicar template
+  Future<void> duplicateTemplate(String templateId) async {
+    final templates = getAllTemplates();
+    final index = templates.indexWhere((t) => t.id == templateId);
+    if (index != -1) {
+      final original = templates[index];
+      final duplicate = Template(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        name: '${original.name} (Cópia)',
+        tasks: original.tasks.map((task) => task.copyWith()).toList(),
+      );
+      templates.add(duplicate);
+      await _saveTemplates(templates);
+    }
+  }
+
   // Obter template por ID
   Template? getTemplateById(String id) {
     final templates = getAllTemplates();
@@ -66,3 +82,4 @@ class TemplateService {
     }
   }
 }
+

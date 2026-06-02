@@ -56,13 +56,13 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
     });
   }
 
-  @override
+    @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.template == null ? 'Novo Template' : 'Editar Template'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -92,7 +92,6 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
                   FloatingActionButton(
                     mini: true,
                     onPressed: () => _addOrEditTask(null),
-                    backgroundColor: Colors.blue,
                     child: const Icon(Icons.add),
                   ),
                 ],
@@ -104,11 +103,11 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 32),
                         child: Column(
                           children: [
-                            Icon(Icons.task_alt, size: 48, color: Colors.grey.shade400),
+                            Icon(Icons.task_alt, size: 48, color: colorScheme.outline),
                             const SizedBox(height: 8),
                             Text(
                               'Nenhuma tarefa adicionada',
-                              style: TextStyle(color: Colors.grey.shade600),
+                              style: TextStyle(color: colorScheme.onSurfaceVariant),
                             ),
                           ],
                         ),
@@ -145,10 +144,6 @@ class _TemplateEditorScreenState extends State<TemplateEditorScreen> {
 
                     Navigator.of(context).pop(template);
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                  ),
                   child: Text(widget.template == null ? 'Criar Template' : 'Salvar Alterações'),
                 ),
               ),

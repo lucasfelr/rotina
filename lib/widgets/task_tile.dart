@@ -15,14 +15,16 @@ class TaskTile extends StatelessWidget {
     required this.onDelete,
   }) : super(key: key);
 
-  @override
+    @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -34,13 +36,13 @@ class TaskTile extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: task.isCompleted ? Colors.blue : Colors.grey.shade400,
+                color: task.isCompleted ? colorScheme.primary : colorScheme.outline,
                 width: 2,
               ),
-              color: task.isCompleted ? Colors.blue : Colors.transparent,
+              color: task.isCompleted ? colorScheme.primary : Colors.transparent,
             ),
             child: task.isCompleted
-                ? const Icon(Icons.check, color: Colors.white, size: 16)
+                ? Icon(Icons.check, color: colorScheme.onPrimary, size: 16)
                 : null,
           ),
         ),
@@ -50,14 +52,14 @@ class TaskTile extends StatelessWidget {
             fontSize: 16,
             fontWeight: FontWeight.w500,
             decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-            color: task.isCompleted ? Colors.grey : Colors.black87,
+            color: task.isCompleted ? colorScheme.outline : colorScheme.onSurface,
           ),
         ),
         subtitle: Text(
           task.time,
           style: TextStyle(
             fontSize: 13,
-            color: Colors.grey.shade600,
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
         trailing: PopupMenuButton(
@@ -69,13 +71,13 @@ class TaskTile extends StatelessWidget {
             }
           },
           itemBuilder: (BuildContext context) => [
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'edit',
               child: Row(
                 children: [
-                  Icon(Icons.edit, size: 18),
-                  SizedBox(width: 8),
-                  Text('Editar'),
+                  Icon(Icons.edit, size: 18, color: colorScheme.onSurface),
+                  const SizedBox(width: 8),
+                  const Text('Editar'),
                 ],
               ),
             ),

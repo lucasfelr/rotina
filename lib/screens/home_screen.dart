@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
-  void _deleteTemplate(Template template) {
+    void _deleteTemplate(Template template) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -94,6 +94,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  void _duplicateTemplate(Template template) async {
+    await widget.templateService.duplicateTemplate(template.id);
+    _loadTemplates();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Template "${template.name} (Cópia)" criado com sucesso')),
+      );
+    }
+  }
+
   void _applyTemplate(Template template) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
@@ -108,19 +118,17 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
-  @override
+    @override
   Widget build(BuildContext context) {
     final hasDailyRoutine = widget.dailyRoutineService.hasDailyRoutine();
     final dailyRoutineData = hasDailyRoutine
         ? widget.dailyRoutineService.getDailyRoutine()
         : null;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rotinas'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-        elevation: 0,
       ),
       body: _templates.isEmpty
           ? Center(
@@ -130,21 +138,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   Icon(
                     Icons.calendar_today,
                     size: 64,
-                    color: Colors.grey.shade400,
+                    color: colorScheme.outline,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Nenhum template criado',
                     style: TextStyle(
                       fontSize: 18,
-                      color: Colors.grey.shade600,
+                      color: colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Crie seu primeiro template para começar',
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+                    style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -158,9 +166,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       Container(
                         margin: const EdgeInsets.only(bottom: 20),
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.blue.shade400, Colors.blue.shade600],
-                          ),
+                          color: colorScheme.primary,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Material(
@@ -191,12 +197,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                     width: 50,
                                     height: 50,
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
+                                      color: colorScheme.onPrimary.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.today,
-                                      color: Colors.white,
+                                      color: colorScheme.onPrimary,
                                       size: 28,
                                     ),
                                   ),
@@ -205,10 +211,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
+                                        Text(
                                           'Rotina de Hoje',
                                           style: TextStyle(
-                                            color: Colors.white,
+                                            color: colorScheme.onPrimary,
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -216,16 +222,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                         Text(
                                           dailyRoutineData['templateName'] ?? '',
                                           style: TextStyle(
-                                            color: Colors.white.withOpacity(0.9),
+                                            color: colorScheme.onPrimary.withOpacity(0.9),
                                             fontSize: 14,
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.arrow_forward,
-                                    color: Colors.white,
+                                    color: colorScheme.onPrimary,
                                   ),
                                 ],
                               ),
@@ -233,79 +239,89 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           ),
                         ),
                       ),
-                    SizedBox(
-                      height: _templates.length * 100,
-                      child: ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                        itemCount: _templates.length,
-                        itemBuilder: (context, index) {
-                          final template = _templates[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.all(16),
-                              title: Text(
-                                template.name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: Text(
-                                '${template.tasks.length} tarefa${template.tasks.length != 1 ? 's' : ''}',
-                                style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              trailing: PopupMenuButton(
-                                onSelected: (value) {
-                                  if (value == 'apply') {
-                                    _applyTemplate(template);
-                                  } else if (value == 'edit') {
-                                    _openTemplateEditor(template: template);
-                                  } else if (value == 'delete') {
-                                    _deleteTemplate(template);
-                                  }
-                                },
-                                itemBuilder: (BuildContext context) => [
-                                  const PopupMenuItem(
-                                    value: 'apply',
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.play_arrow, size: 18, color: Colors.blue),
-                                        SizedBox(width: 8),
-                                        Text('Aplicar Hoje'),
-                                      ],
-                                    ),
-                                  ),
-                                  const PopupMenuItem(
-                                    value: 'edit',
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.edit, size: 18),
-                                        SizedBox(width: 8),
-                                        Text('Editar'),
-                                      ],
-                                    ),
-                                  ),
-                                  const PopupMenuItem(
-                                    value: 'delete',
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.delete, size: 18, color: Colors.red),
-                                        SizedBox(width: 8),
-                                        Text('Deletar', style: TextStyle(color: Colors.red)),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.zero,
+                      itemCount: _templates.length,
+                      itemBuilder: (context, index) {
+                        final template = _templates[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16),
+                            title: Text(
+                              template.name,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          );
-                        },
-                      ),
+                            subtitle: Text(
+                              '${template.tasks.length} tarefa${template.tasks.length != 1 ? 's' : ''}',
+                              style: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 14,
+                              ),
+                            ),
+                            trailing: PopupMenuButton(
+                              onSelected: (value) {
+                                if (value == 'apply') {
+                                  _applyTemplate(template);
+                                } else if (value == 'edit') {
+                                  _openTemplateEditor(template: template);
+                                } else if (value == 'duplicate') {
+                                  _duplicateTemplate(template);
+                                } else if (value == 'delete') {
+                                  _deleteTemplate(template);
+                                }
+                              },
+                              itemBuilder: (BuildContext context) => [
+                                PopupMenuItem(
+                                  value: 'apply',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.play_arrow, size: 18, color: colorScheme.primary),
+                                      const SizedBox(width: 8),
+                                      const Text('Aplicar Hoje'),
+                                    ],
+                                  ),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'edit',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.edit, size: 18),
+                                      SizedBox(width: 8),
+                                      Text('Editar'),
+                                    ],
+                                  ),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'duplicate',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.copy, size: 18),
+                                      SizedBox(width: 8),
+                                      Text('Duplicar'),
+                                    ],
+                                  ),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.delete, size: 18, color: Colors.red),
+                                      SizedBox(width: 8),
+                                      Text('Deletar', style: TextStyle(color: Colors.red)),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -313,7 +329,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _openTemplateEditor(),
-        backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ),
     );

@@ -60,16 +60,15 @@ class _ApplyTemplateScreenState extends State<ApplyTemplateScreen> {
     });
   }
 
-  @override
+    @override
   Widget build(BuildContext context) {
     final todayDate = DateFormat('EEEE, d \'de\' MMMM', 'pt_BR').format(DateTime.now());
     final completedCount = _todayTasks.where((task) => task.isCompleted).length;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rotina do Dia'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -80,19 +79,19 @@ class _ApplyTemplateScreenState extends State<ApplyTemplateScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
+                  color: colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.blue.shade200),
+                  border: Border.all(color: colorScheme.outlineVariant),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       widget.template.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+                        color: colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -100,20 +99,20 @@ class _ApplyTemplateScreenState extends State<ApplyTemplateScreen> {
                       todayDate,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey.shade700,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.blue,
+                        color: colorScheme.primary,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         '$completedCount/${_todayTasks.length} concluídas',
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: colorScheme.onPrimary,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -129,11 +128,11 @@ class _ApplyTemplateScreenState extends State<ApplyTemplateScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 48),
                     child: Column(
                       children: [
-                        Icon(Icons.task_alt, size: 48, color: Colors.grey.shade400),
+                        Icon(Icons.task_alt, size: 48, color: colorScheme.outline),
                         const SizedBox(height: 8),
                         Text(
                           'Nenhuma tarefa neste template',
-                          style: TextStyle(color: Colors.grey.shade600),
+                          style: TextStyle(color: colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
